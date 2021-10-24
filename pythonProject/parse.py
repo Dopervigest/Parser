@@ -158,8 +158,6 @@ class Parser():
             else:
                 break
 
-
-
     def labirint(self):
         count, results1 = 1, ""
         for i in range(100):
