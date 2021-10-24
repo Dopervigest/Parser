@@ -76,8 +76,7 @@ class Parser():
             self.link.append("http://bookean.ru" + str(link.get('href')))
 
     def bookskazan(self):
-        i = 1
-        for i in range(100):
+        for i in range(1, 100):
             URL = "https://bookskazan.ru/catalog/?page=" + str(i) + "&q=Атлас"  # + self.user_search
             page = requests.get(URL)
             soup = BeautifulSoup(page.content, "html.parser")
@@ -196,8 +195,7 @@ class Parser():
                 break
 
     def prodalit(self):
-        i = 1
-        for i in range(100):
+        for i in range(1, 100):
             URL = "https://www.prodalit.ru/cat?FindMode=Short&SearchText=" + self.user_search.replace(" ", "+") + "&PageNumber=" + str(i)
             page = requests.get(URL)
             soup = BeautifulSoup(page.content, "html.parser")
@@ -215,10 +213,8 @@ class Parser():
                 self.author.append(author.text.strip())
                 self.price.append(price.text.strip())
                 self.link.append("https://www.prodalit.ru" + link.get('href'))
-            i += 1
 
     def books_moda(self):
-        i = 0
         for i in range(5):
             URL = "https://books.moda/search?srch=" + self.user_search.replace(" ", "+") + "&page=" + str(i)
             page = requests.get(URL)
@@ -236,11 +232,9 @@ class Parser():
                 self.author.append('')
                 self.price.append(price.text.strip().replace(" ", ""))
                 self.link.append("https://books.moda" + link.get('href'))
-            i += 1
 
     def dreamers(self):  # фантазёры.рф
-        i = 1
-        for i in range(10):
+        for i in range(1, 10):
             URL = "https://фантазеры.рф/search/?page=" + str(i) + "&query=" + self.user_search.replace(" ", "+")
             page = requests.get(URL)
             soup = BeautifulSoup(page.content, "html.parser")
@@ -258,17 +252,69 @@ class Parser():
                 self.author.append('')
                 self.price.append(price.text.strip().replace(" ₽", "").replace(" ", ""))
                 self.link.append("https://фантазеры.рф" + title.get('href'))
-            i += 1
+
+    def domknigi(self):
+        for i in range(1, 10):
+            URL = "https://domknigi-online.ru/search?search=" + self.user_search +"&search_type=full&page=" + str(i)
+            page = requests.get(URL)
+            soup = BeautifulSoup(page.content, "html.parser")
+            results = soup.find("ul", class_="product_carousel product_carousel_4 clearfix")
+            try:
+                book_elements = results.find_all("li", class_="product-layout list-unstyled list-inline")
+            except AttributeError:
+                break
+            for book_element in book_elements:
+                title = str(book_element.find("span", class_="product_title").find("a"))
+                price = book_element.find("span", class_="product_count pull-left")
+                if price is None:
+                    continue
+                link = book_element.find("span", class_="product_title").find("a").get("href")
+                self.title.append(title[title.find('">') + 2: title.find('</a>')])
+                self.author.append('')
+                self.price.append(price.text.strip())
+                self.link.append(link)
+
+    def korobkaknig(self):
+        for i in range(1, 10):
+            if i == 1:
+                URL = "https://korobkaknig.ru/search/?search=" + self.user_search + "&description=true"
+            else:
+                URL = "https://korobkaknig.ru/search/?search=" + self.user_search + "&description=true" + "&page=" + str(i)
+            page = requests.get(URL)
+            soup = BeautifulSoup(page.content, "html.parser")
+            results = soup.find("div", id="main_content")
+            try:
+                book_elements = results.find_all("div", class_="product-layout product-grid col-lg-4 col-md-6 col-sm-6 col-xs-12")
+            except AttributeError:
+                break
+            for book_element in book_elements:
+                title = str((book_element.find("div", class_="caption")).find("a"))
+                if title is None:
+                    continue
+                price = book_element.find("p", class_="price")
+                if price is None:
+                    continue
+                link = book_element.find("div", class_="caption").find("a").get("href")
+                author = book_element.find("div", class_="attribute").find("span", class_="attr_value")
+                self.title.append(title[title.find('">') + 2: title.find('</a>')])
+                self.author.append(author.text.strip())
+                self.price.append(price.text.strip().replace(" р.", ""))
+                self.link.append(link)
+
 
 
 One = Parser()
 One.new_search()
-One.dreamers()
+One.korobkaknig()
 print(One.title)
-# print(One.author)
-# print(One.price)
-# print(One.link)
-# print(len(One.title))
-# print(len(One.author))
-# print(len(One.price))
-# print(len(One.link))
+print(One.author)
+print(One.price)
+print(One.link)
+print(len(One.title))
+print(len(One.author))
+print(len(One.price))
+print(len(One.link))
+
+
+# косячные: https://www.chitai-gorod.ru/, https://chitaina.ru/, https://my-shop.ru, https://knigi-market.ru
+# Очень косячные: https://bookpiter.ru/
