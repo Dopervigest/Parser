@@ -218,18 +218,18 @@ class Parser():
             i += 1
 
     def books_moda(self):
-        URL = "https://books.moda/search?srch=Стивен%20Кинг"  # + self.user_search.replace(" ", "%20")
+        URL = "https://books.moda/search?srch=Стивен+Кинг"  # + self.user_search.replace(" ", "+")
         page = requests.get(URL)
         soup = BeautifulSoup(page.content, "html.parser")
-        results = soup.find("div", class_="view-content")
+        results = soup.find("section", id="block-system-main")
         book_elements = results.find_all("div", class_="views-row")
         for book_element in book_elements:
             title = book_element.find("div", class_="title")
             price = book_element.find("span", class_="value")
-            link = book_element.find("a")
+            link = title.find("a")
             self.title.append(title.text.strip())
             self.author.append('')
-            self.price.append(price.text.strip())
+            self.price.append(price.text.strip().replace(" ", ""))
             self.link.append("https://books.moda" + link.get('href'))
 
 
