@@ -218,25 +218,53 @@ class Parser():
             i += 1
 
     def books_moda(self):
-        URL = "https://books.moda/search?srch=Стивен%20Кинг"  # + self.user_search.replace(" ", "%20")
-        page = requests.get(URL)
-        soup = BeautifulSoup(page.content, "html.parser")
-        results = soup.find("div", class_="view-content")
-        book_elements = results.find_all("div", class_="views-row")
-        for book_element in book_elements:
-            title = book_element.find("div", class_="title")
-            price = book_element.find("span", class_="value")
-            link = book_element.find("a")
-            self.title.append(title.text.strip())
-            self.author.append('')
-            self.price.append(price.text.strip())
-            self.link.append("https://books.moda" + link.get('href'))
+        i = 0
+        for i in range(5):
+            URL = "https://books.moda/search?srch=" + self.user_search.replace(" ", "+") + "&page=" + str(i)
+            page = requests.get(URL)
+            soup = BeautifulSoup(page.content, "html.parser")
+            results = soup.find("section", id="block-system-main")
+            try:
+                book_elements = results.find_all("div", class_="views-row")
+            except AttributeError:
+                break
+            for book_element in book_elements:
+                title = book_element.find("div", class_="title")
+                price = book_element.find("span", class_="value")
+                link = title.find("a")
+                self.title.append(title.text.strip())
+                self.author.append('')
+                self.price.append(price.text.strip().replace(" ", ""))
+                self.link.append("https://books.moda" + link.get('href'))
+            i += 1
+
+    def dreamers(self):  # фантазёры.рф
+        i = 1
+        for i in range(10):
+            URL = "https://фантазеры.рф/search/?page=" + str(i) + "&query=" + self.user_search.replace(" ", "+")
+            page = requests.get(URL)
+            soup = BeautifulSoup(page.content, "html.parser")
+            results = soup.find("div", id="product-list")
+            try:
+                book_elements = results.find_all("div", class_="product flexdiscount-product-wrap")
+            except AttributeError:
+                break
+            for book_element in book_elements:
+                title = book_element.find("a")
+                price = book_element.find("span", class_="price price-new nowrap")
+                if price is None:
+                    price = book_element.find("span", class_="price nowrap")
+                self.title.append(title.get('title'))
+                self.author.append('')
+                self.price.append(price.text.strip().replace(" ₽", "").replace(" ", ""))
+                self.link.append("https://фантазеры.рф" + title.get('href'))
+            i += 1
 
 
 One = Parser()
-# One.new_search()
-One.books_moda()
-# print(One.title)
+One.new_search()
+One.dreamers()
+print(One.title)
 # print(One.author)
 # print(One.price)
 # print(One.link)
