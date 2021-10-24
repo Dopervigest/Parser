@@ -218,23 +218,32 @@ class Parser():
             i += 1
 
     def books_moda(self):
-        URL = "https://books.moda/search?srch=Стивен+Кинг"  # + self.user_search.replace(" ", "+")
-        page = requests.get(URL)
-        soup = BeautifulSoup(page.content, "html.parser")
-        results = soup.find("section", id="block-system-main")
-        book_elements = results.find_all("div", class_="views-row")
-        for book_element in book_elements:
-            title = book_element.find("div", class_="title")
-            price = book_element.find("span", class_="value")
-            link = title.find("a")
-            self.title.append(title.text.strip())
-            self.author.append('')
-            self.price.append(price.text.strip().replace(" ", ""))
-            self.link.append("https://books.moda" + link.get('href'))
+        i = 0
+        for i in range(5):
+            URL = "https://books.moda/search?srch=" + self.user_search.replace(" ", "+") + "&page=" + str(i)
+            page = requests.get(URL)
+            soup = BeautifulSoup(page.content, "html.parser")
+            results = soup.find("section", id="block-system-main")
+            try:
+                book_elements = results.find_all("div", class_="views-row")
+            except AttributeError:
+                break
+            for book_element in book_elements:
+                title = book_element.find("div", class_="title")
+                price = book_element.find("span", class_="value")
+                link = title.find("a")
+                self.title.append(title.text.strip())
+                self.author.append('')
+                self.price.append(price.text.strip().replace(" ", ""))
+                self.link.append("https://books.moda" + link.get('href'))
+            i += 1
+
+    def libroroom(self):
+        print('')
 
 
 One = Parser()
-# One.new_search()
+One.new_search()
 One.books_moda()
 # print(One.title)
 # print(One.author)
