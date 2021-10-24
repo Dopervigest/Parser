@@ -316,5 +316,5 @@ print(len(One.price))
 print(len(One.link))
 
 
-# косячные: https://www.chitai-gorod.ru/, https://chitaina.ru/, https://my-shop.ru, https://knigi-market.ru
+# косячные: https://www.chitai-gorod.ru/, https://chitaina.ru/, https://my-shop.ru, https://knigi-market.ru, https://libroroom.ru/
 # Очень косячные: https://bookpiter.ru/
