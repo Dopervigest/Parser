@@ -217,11 +217,26 @@ class Parser():
                 self.link.append("https://www.prodalit.ru" + link.get('href'))
             i += 1
 
+    def books_moda(self):
+        URL = "https://books.moda/search?srch=Стивен%20Кинг"  # + self.user_search.replace(" ", "%20")
+        page = requests.get(URL)
+        soup = BeautifulSoup(page.content, "html.parser")
+        results = soup.find("div", class_="view-content")
+        book_elements = results.find_all("div", class_="views-row")
+        for book_element in book_elements:
+            title = book_element.find("div", class_="title")
+            price = book_element.find("span", class_="value")
+            link = book_element.find("a")
+            self.title.append(title.text.strip())
+            self.author.append('')
+            self.price.append(price.text.strip())
+            self.link.append("https://books.moda" + link.get('href'))
+
 
 One = Parser()
-One.new_search()
-One.prodalit()
-print(One.title)
+# One.new_search()
+One.books_moda()
+# print(One.title)
 # print(One.author)
 # print(One.price)
 # print(One.link)
