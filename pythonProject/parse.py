@@ -200,13 +200,13 @@ class Parser():
 
 
 One = Parser()
-One.new_search()
+#One.new_search()
 One.labirint()
 print(One.title)
 print(One.author)
 print(One.price)
 print(One.link)
-print(len(One.title))
-print(len(One.author))
-print(len(One.price))
-print(len(One.link))
+#print(len(One.title))
+#print(len(One.author))
+#print(len(One.price))
+#print(len(One.link))
