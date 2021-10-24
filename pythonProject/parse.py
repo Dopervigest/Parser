@@ -195,16 +195,52 @@ class Parser():
             else:
                 break
 
-#коммент для проверки
+    def prodalit(self):
+        i = 1
+        for i in range(100):
+            URL = "https://www.prodalit.ru/cat?FindMode=Short&SearchText=" + self.user_search.replace(" ", "+") + "&PageNumber=" + str(i)
+            page = requests.get(URL)
+            soup = BeautifulSoup(page.content, "html.parser")
+            results = soup.find("div", class_="tg-products tg-products-5")
+            try:
+                book_elements = results.find_all("div", class_="vtProduct")
+            except AttributeError:
+                break
+            for book_element in book_elements:
+                title = book_element.find("h3")
+                author = book_element.find("div", class_="tg-bookwriter")
+                price = book_element.find("ins")
+                link = book_element.find("a")
+                self.title.append(title.text.strip().replace("\n", " "))
+                self.author.append(author.text.strip())
+                self.price.append(price.text.strip())
+                self.link.append("https://www.prodalit.ru" + link.get('href'))
+            i += 1
+
+    def books_moda(self):
+        URL = "https://books.moda/search?srch=Стивен%20Кинг"  # + self.user_search.replace(" ", "%20")
+        page = requests.get(URL)
+        soup = BeautifulSoup(page.content, "html.parser")
+        results = soup.find("div", class_="view-content")
+        book_elements = results.find_all("div", class_="views-row")
+        for book_element in book_elements:
+            title = book_element.find("div", class_="title")
+            price = book_element.find("span", class_="value")
+            link = book_element.find("a")
+            self.title.append(title.text.strip())
+            self.author.append('')
+            self.price.append(price.text.strip())
+            self.link.append("https://books.moda" + link.get('href'))
+
 
 One = Parser()
-#One.new_search()
-One.labirint()
-print(One.title)
-print(One.author)
-print(One.price)
-print(One.link)
-#print(len(One.title))
-#print(len(One.author))
-#print(len(One.price))
-#print(len(One.link))
+# One.new_search()
+One.books_moda()
+# print(One.title)
+# print(One.author)
+# print(One.price)
+# print(One.link)
+# print(len(One.title))
+# print(len(One.author))
+# print(len(One.price))
+# print(len(One.link))
