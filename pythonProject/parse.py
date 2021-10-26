@@ -301,11 +301,60 @@ class Parser():
                 self.price.append(price.text.strip().replace(" р.", ""))
                 self.link.append(link)
 
+    def bukinist(self):
+        URL = "https://bukinistkniga.ru/all-products/page-all?keyword=" + self.user_search
+        page = requests.get(URL)
+        soup = BeautifulSoup(page.content, "html.parser")
+        results = soup.find("div", id="fn_products_content")
+        try:
+            book_elements = results.find_all("div", class_="col-sm-6 col-xl-4")
+        except AttributeError:
+            return
+        for book_element in book_elements:
+            title = str((book_element.find("div", class_="preview_details")).find("a"))
+            if title is None:
+                continue
+            price = book_element.find("div", class_="price")
+            if price is None:
+                continue
+            link = book_element.find("a", class_="product_name").get("href")
+            self.title.append(title[title.find('">') + 2: title.find('</a>')])
+            self.author.append("")
+            self.price.append(price.text.strip().replace(" руб", ""))
+            self.link.append("https://bukinistkniga.ru/" + link)
+
+    def respublica(self):
+        URL = "https://www.respublica.ru/search?query=" + self.user_search + "&category_id=1"
+        page = requests.get(URL)
+        soup = BeautifulSoup(page.content, "html.parser")
+        results = soup.find("div", class_="page")
+        try:
+            book_elements = results.find_all("div", class_="item")
+        except AttributeError:
+            return
+        for book_element in book_elements:
+            title = (book_element.find("div", class_="title")).find("a").get("title")
+            if title is None:
+                continue
+            price = book_element.find("div", class_="price")
+            if price is None:
+                continue
+            link = book_element.find("a", class_="title-link").get("href")
+            author = book_element.find("a", class_="brand-link").get("title")
+            self.title.append(title)
+            if author:
+                self.author.append(author)
+            else:
+                self.author.append("")
+            self.price.append(price.text.strip().replace(" руб.", "").strip())
+            self.link.append("https://www.respublica.ru/" + link)
+
+
 
 
 One = Parser()
 One.new_search()
-One.korobkaknig()
+One.respublica()
 print(One.title)
 print(One.author)
 print(One.price)
@@ -315,6 +364,6 @@ print(len(One.author))
 print(len(One.price))
 print(len(One.link))
 
-
+# попроще, но косячные: https://www.knor.ru (надо придумать как перевести запрос в URL код)
 # косячные: https://www.chitai-gorod.ru/, https://chitaina.ru/, https://my-shop.ru, https://knigi-market.ru, https://libroroom.ru/
 # Очень косячные: https://bookpiter.ru/
