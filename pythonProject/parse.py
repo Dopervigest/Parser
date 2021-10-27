@@ -14,6 +14,13 @@ class Parser():
     def new_search(self):
         self.user_search = input("Какую книгу вы хотите найти?:   ")
 
+    def single_output(self):
+        for i in range(self.search_len, len(self.title)):
+            print(self.title[i] + "  -  " + self.author[i])
+            print(self.price[i])
+            print(self.link[i])
+        self.search_len = len(self.title)
+
     def bukvoed(self):
         URL = "https://www.bookvoed.ru/books?q=" + self.user_search
         page = requests.get(URL)
@@ -350,13 +357,6 @@ class Parser():
             self.price.append(price.text.strip().replace(" руб.", "").strip())
             self.link.append("https://www.respublica.ru/" + link)
 
-    def single_output(self):
-        for i in range(self.search_len, len(self.title)):
-            print(self.title[i] + "  -  " + self.author[i])
-            print(self.price[i])
-            print(self.link[i])
-        self.search_len = len(self.title) - 1
-
 
 One = Parser()
 One.new_search()
@@ -370,10 +370,9 @@ One.labirint()
 # print(len(One.price))
 # print(len(One.link))
 One.single_output()  # Выводится список первого магазина
-search_len = len(One.title) - 1  # Задаётся новый id для начала вывода
 print(len(One.title))
 One.respublica()
-One.single_output(search_len)  # Выводится список второго магазина начиная с места, где в прошлый раз закончился вывод
+One.single_output()  # Выводится список второго магазина начиная с места, где в прошлый раз закончился вывод
 print(len(One.title))  # Просто проверка длины списка
 
 
