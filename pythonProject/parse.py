@@ -255,7 +255,7 @@ class Parser():
 
     def domknigi(self):
         for i in range(1, 10):
-            URL = "https://domknigi-online.ru/search?search=" + self.user_search +"&search_type=full&page=" + str(i)
+            URL = "https://domknigi-online.ru/search?search=" + self.user_search + "&search_type=full&page=" + str(i)
             page = requests.get(URL)
             soup = BeautifulSoup(page.content, "html.parser")
             results = soup.find("ul", class_="product_carousel product_carousel_4 clearfix")
@@ -349,20 +349,32 @@ class Parser():
             self.price.append(price.text.strip().replace(" руб.", "").strip())
             self.link.append("https://www.respublica.ru/" + link)
 
-
+    def single_output(self, start):
+        for i in range(start, len(self.title)):
+            print(self.title[i] + "  -  " + self.author[i])
+            print(self.price[i])
+            print(self.link[i])
 
 
 One = Parser()
+search_len = 0  # Перменная отвечает за id начала вывода в списке
 One.new_search()
-One.respublica()
-print(One.title)
-print(One.author)
-print(One.price)
-print(One.link)
+One.labirint()
+# print(One.title)
+# print(One.author)
+# print(One.price)
+# print(One.link)
+# print(len(One.title))
+# print(len(One.author))
+# print(len(One.price))
+# print(len(One.link))
+One.single_output(search_len)  # Выводится список первого магазина
+search_len = len(One.title) - 1  # Задаётся новый id для начала вывода
 print(len(One.title))
-print(len(One.author))
-print(len(One.price))
-print(len(One.link))
+One.respublica()
+One.single_output(search_len)  # Выводится список второго магазина начиная с места, где в прошлый раз закончился вывод
+print(len(One.title))  # Просто проверка длины списка
+
 
 # попроще, но косячные: https://www.knor.ru (надо придумать как перевести запрос в URL код)
 # косячные: https://www.chitai-gorod.ru/, https://chitaina.ru/, https://my-shop.ru, https://knigi-market.ru, https://libroroom.ru/
