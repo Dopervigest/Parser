@@ -9,6 +9,7 @@ class Parser():
         self.price = []
         self.link = []
         self.user_search = ''
+        self.search_len = 0
 
     def new_search(self):
         self.user_search = input("Какую книгу вы хотите найти?:   ")
@@ -349,15 +350,15 @@ class Parser():
             self.price.append(price.text.strip().replace(" руб.", "").strip())
             self.link.append("https://www.respublica.ru/" + link)
 
-    def single_output(self, start):
-        for i in range(start, len(self.title)):
+    def single_output(self):
+        for i in range(self.search_len, len(self.title)):
             print(self.title[i] + "  -  " + self.author[i])
             print(self.price[i])
             print(self.link[i])
+        self.search_len = len(self.title) - 1
 
 
 One = Parser()
-search_len = 0  # Перменная отвечает за id начала вывода в списке
 One.new_search()
 One.labirint()
 # print(One.title)
@@ -368,7 +369,7 @@ One.labirint()
 # print(len(One.author))
 # print(len(One.price))
 # print(len(One.link))
-One.single_output(search_len)  # Выводится список первого магазина
+One.single_output()  # Выводится список первого магазина
 search_len = len(One.title) - 1  # Задаётся новый id для начала вывода
 print(len(One.title))
 One.respublica()
