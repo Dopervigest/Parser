@@ -1,6 +1,2 @@
-import parse
-
-
-One = parse.Parser()
-One.bukvoed()
-print(One.author)
+for i in range(1, 10):
+    print(i)
