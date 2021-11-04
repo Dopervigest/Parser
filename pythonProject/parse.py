@@ -389,12 +389,16 @@ class Parser():
         for book_element in book_elements:
             title = (book_element.find("a", class_="dark_link option-font-bold font_sm").find("span"))
             price = (book_element.find("span", class_="price_value"))
-            link = (book_element.find("a", class_="dark_link option-font-bold font_sm")
+            link = (book_element.find("a", class_="dark_link option-font-bold font_sm"))
+            self.title.append(title.text.strip())
+            self.author.append("")
+            self.price.append(price.text.strip())
+            self.link.append("https://inet-kniga.ru" + link.get("href"))
 
 
-# One = Parser()
+One = Parser()
 # One.new_search()
-# One.inet_kniga()
+One.inet_kniga()
 # print(One.title)
 # print(One.author)
 # print(One.price)
@@ -413,3 +417,5 @@ class Parser():
 # попроще, но косячные: https://www.knor.ru (надо придумать как перевести запрос в URL код)
 # косячные: https://www.chitai-gorod.ru/, https://chitaina.ru/, https://my-shop.ru, https://knigi-market.ru, https://libroroom.ru/
 # Очень косячные: https://bookpiter.ru/
+
+# косячные у меня: https://libroroom.ru/, https://strana-fantasy.ru/, https://www.clever-media.ru, https://regionbook.ru/, https://slovo-shop.ru/, https://urizdat.ru/
