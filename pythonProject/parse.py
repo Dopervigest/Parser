@@ -357,10 +357,33 @@ class Parser():
             self.price.append(price.text.strip().replace(" руб.", "").strip())
             self.link.append("https://www.respublica.ru/" + link)
 
+    def alpinabook(self):
+        for i in range(1, 10):
+            URL = "https://alpinabook.ru/catalog/search/?pageN=" + str(i) + "&q=" + self.user_search.replace(" ", "+")
+            page = requests.get(URL)
+            soup = BeautifulSoup(page.content, "html.parser")
+            results = soup.find("div", class_="b-catalog-items")
+            try:
+                book_elements = results.find_all("div", class_="b-catalog-items__item")
+            except AttributeError:
+                return
+            for book_element in book_elements:
+                title = (book_element.find("span", itemprop="name"))
+                author = (book_element.find("span", itemprop="author"))
+                price = (book_element.find("span", class_="js-book-card__pricesActual"))
+                link = (book_element.find("a", class_="gtm-book-card__link"))
+                self.title.append(title.text.strip())
+                self.author.append(author.text.strip())
+                if price is not None:
+                    self.price.append(price.text.strip().replace("\n                            руб.", ""))
+                else:
+                    self.price.append('')
+                self.link.append("https://alpinabook.ru" + link.get("href"))
+
 
 One = Parser()
-One.new_search()
-One.labirint()
+# One.new_search()
+# One.alpinabook()
 # print(One.title)
 # print(One.author)
 # print(One.price)
@@ -369,11 +392,11 @@ One.labirint()
 # print(len(One.author))
 # print(len(One.price))
 # print(len(One.link))
-One.single_output()  # Выводится список первого магазина
-print(len(One.title))
-One.respublica()
-One.single_output()  # Выводится список второго магазина начиная с места, где в прошлый раз закончился вывод
-print(len(One.title))  # Просто проверка длины списка
+# One.single_output()
+# print(len(One.title))
+# One.respublica()
+# One.single_output()
+# print(len(One.title))
 
 
 # попроще, но косячные: https://www.knor.ru (надо придумать как перевести запрос в URL код)
