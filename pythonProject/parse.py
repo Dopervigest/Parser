@@ -380,10 +380,21 @@ class Parser():
                     self.price.append('')
                 self.link.append("https://alpinabook.ru" + link.get("href"))
 
+    def inet_kniga(self):
+        URL = "https://inet-kniga.ru/catalog/?q=Стивен+Кинг&s=Найти"
+        page = requests.get(URL)
+        soup = BeautifulSoup(page.content, "html.parser")
+        results = soup.find("div", class_="top_wrapper items_wrapper catalog_block_template")
+        book_elements = results.find_all("div", class_="col-lg-3 col-md-4 col-sm-6 col-xs-6 col-xxs-12 item item-parent catalog-block-view__item item_block")
+        for book_element in book_elements:
+            title = (book_element.find("a", class_="dark_link option-font-bold font_sm").find("span"))
+            price = (book_element.find("span", class_="price_value"))
+            link = (book_element.find("a", class_="dark_link option-font-bold font_sm")
 
-One = Parser()
+
+# One = Parser()
 # One.new_search()
-# One.alpinabook()
+# One.inet_kniga()
 # print(One.title)
 # print(One.author)
 # print(One.price)
