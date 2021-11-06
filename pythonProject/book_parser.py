@@ -1,8 +1,9 @@
+from requests_html import HTMLSession
 import requests
 from bs4 import BeautifulSoup
 
 
-class Parser():
+class Parser:
     def __init__(self):
         self.title = []
         self.author = []
@@ -331,6 +332,31 @@ class Parser():
             self.price.append(price.text.strip().replace(" руб", ""))
             self.link.append("https://bukinistkniga.ru/" + link)
 
+    def azbuka96(self):
+        URL = "http://azbuka96.ru/search/query/" + self.user_search
+        page = requests.get(URL)
+        soup = BeautifulSoup(page.content, "html.parser")
+        results = soup.find("div", id="catalog")
+        try:
+            book_elements = results.find_all("div", class_="block_item")
+        except AttributeError:
+            return
+        for book_element in book_elements:
+            title = book_element.find("div", class_="item").find("a")
+            if title:
+                title = title.text.strip()
+                title = title[: title.find("/")]
+                print(title)
+            else:
+                continue
+            price = book_element.find("div", class_="item_price")
+            link = book_element.find("div", class_="item_name").find("a").get("href")
+            self.title.append(title)
+            self.author.append("")
+            self.price.append(price.text.strip().replace(" р", ""))
+            self.link.append(link)
+
+
     def respublica(self):
         URL = "https://www.respublica.ru/search?query=" + self.user_search + "&category_id=1"
         page = requests.get(URL)
@@ -357,61 +383,57 @@ class Parser():
             self.price.append(price.text.strip().replace(" руб.", "").strip())
             self.link.append("https://www.respublica.ru/" + link)
 
-    def alpinabook(self):
-        for i in range(1, 10):
-            URL = "https://alpinabook.ru/catalog/search/?pageN=" + str(i) + "&q=" + self.user_search.replace(" ", "+")
-            page = requests.get(URL)
-            soup = BeautifulSoup(page.content, "html.parser")
-            results = soup.find("div", class_="b-catalog-items")
+    def books(self):     #надо проверить на страницы
+        s = HTMLSession()
+        for i in range(1, 6):
+            if i == 1:
+                URL = "https://www.books.ru/search.php?s%5Bquery%5D=" + self.user_search.replace(" ","+") + "&s%5Bpresence%5D=all&s%5Bscope%5D=everywhere&s%5Bgo%5D=1&passing=1&s[type_of_addon]=books"
+            else:
+                URL = "https://www.books.ru/search.php?s%5Bquery%5D=" + self.user_search.replace(" ","+") + "s%5Bpresence%5D=all&s%5Bscope%5D=everywhere&s%5Bgo%5D=1&passing=1&s[type_of_addon]=books&page=" + str(i)
+            session = s.get(URL)
+            session.html.render(sleep=1, keep_page=True, scrolldown=1)
+            soup = BeautifulSoup(session.content, "html.parser")
+            results = soup.find("div", class_="catalog-main_row catalog-main_row_card")
             try:
-                book_elements = results.find_all("div", class_="b-catalog-items__item")
+                book_elements = results.find_all("div", class_="book-catalog_item")
             except AttributeError:
                 return
             for book_element in book_elements:
-                title = (book_element.find("span", itemprop="name"))
-                author = (book_element.find("span", itemprop="author"))
-                price = (book_element.find("span", class_="js-book-card__pricesActual"))
-                link = (book_element.find("a", class_="gtm-book-card__link"))
-                self.title.append(title.text.strip())
-                self.author.append(author.text.strip())
-                if price is not None:
-                    self.price.append(price.text.strip().replace("\n                            руб.", ""))
+                title = book_element.find("a", class_="custom-link book-catalog_item_title").get("data-title")
+                if title is None:
+                    continue
+                price = book_element.find("span", class_="book-price")
+                if price is None:
+                    continue
+                author = str(book_element.find("div", class_="book-catalog_item_author").find("a"))
+                author = author[author.find('">') +2: author.find('</a>')]
+                link = book_element.find("a", class_="custom-link book-catalog_item_title").get("href")
+                self.title.append(title)
+                self.price.append(price.text.strip().replace(" ₽", ""))
+                if author == "on":
+                    self.author.append("")
                 else:
-                    self.price.append('')
-                self.link.append("https://alpinabook.ru" + link.get("href"))
-
-    def inet_kniga(self):
-        URL = "https://inet-kniga.ru/catalog/?q=Стивен+Кинг&s=Найти"
-        page = requests.get(URL)
-        soup = BeautifulSoup(page.content, "html.parser")
-        results = soup.find("div", class_="top_wrapper items_wrapper catalog_block_template")
-        book_elements = results.find_all("div", class_="col-lg-3 col-md-4 col-sm-6 col-xs-6 col-xxs-12 item item-parent catalog-block-view__item item_block")
-        for book_element in book_elements:
-            title = (book_element.find("a", class_="dark_link option-font-bold font_sm").find("span"))
-            price = (book_element.find("span", class_="price_value"))
-            link = (book_element.find("a", class_="dark_link option-font-bold font_sm"))
-            self.title.append(title.text.strip())
-            self.author.append("")
-            self.price.append(price.text.strip())
-            self.link.append("https://inet-kniga.ru" + link.get("href"))
+                    self.author.append(author)
+                self.link.append("https://www.books.ru" + link)
 
 
 One = Parser()
-# One.new_search()
-One.inet_kniga()
-# print(One.title)
-# print(One.author)
-# print(One.price)
-# print(One.link)
-# print(len(One.title))
-# print(len(One.author))
-# print(len(One.price))
-# print(len(One.link))
-# One.single_output()
-# print(len(One.title))
-# One.respublica()
-# One.single_output()
-# print(len(One.title))
+One.new_search()
+One.books()
+
+print(One.title)
+print(One.author)
+print(One.price)
+print(One.link)
+print(len(One.title))
+print(len(One.author))
+print(len(One.price))
+print(len(One.link))
+#One.single_output()
+#print(len(One.title))
+#One.respublica()
+#One.single_output()
+#print(len(One.title))
 
 
 # попроще, но косячные: https://www.knor.ru (надо придумать как перевести запрос в URL код)
