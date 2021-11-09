@@ -1,7 +1,11 @@
 import requests
 from bs4 import BeautifulSoup
+import urllib.parse
+query = 'Hellö Wörld@Python'
+urllib.parse.quote(query)
+print(urllib.parse.quote(query))
 
-
+"""
 search = input("Какую книгу вы хотите найти?:   ").replace(" ", "+")
 URL = "https://fkniga.ru/search/?q=" + search
 page = requests.get(URL)
@@ -24,3 +28,4 @@ else:
         print("Цена:", price.text.strip())
         print("Ссылка:" , "https://fkniga.ru", link.get('href'), sep="")
         print()
+"""""

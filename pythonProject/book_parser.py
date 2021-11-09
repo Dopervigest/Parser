@@ -1,3 +1,5 @@
+import urllib
+
 from requests_html import HTMLSession
 import requests
 from bs4 import BeautifulSoup
@@ -416,10 +418,39 @@ class Parser:
                     self.author.append(author)
                 self.link.append("https://www.books.ru" + link)
 
+    def libroroom(self):
+        s = HTMLSession()
+        URL = "https://libroroom.ru/catalog/?q=" + self.user_search.replace(" ", "+") + "&how=r"
+        session = s.get(URL)
+        session.html.render(sleep=1, keep_page=True, scrolldown=1)
+        soup = BeautifulSoup(session.content, "html.parser")
+        results = soup.find("div", class_="catalog block ajax_load search")
+        try:
+            book_elements = results.find_all("div", class_="catalog_item_wrapp")
+        except AttributeError:
+            return
+        for book_element in book_elements:
+            title = book_element.find("div", class_="item-title")
+            if title is None:
+                continue
+            try:
+                price = book_element.find("div", class_="price").get("data-value")
+            except AttributeError:
+                continue
+            if price is None:
+                continue
+            link = book_element.find("div", class_="item-title").find("a").get("href")
+            self.title.append(title.text.strip())
+            self.price.append(price)
+            self.author.append("")
+            self.link.append("https://libroroom.ru/" + link)
+
+
+
 
 One = Parser()
 One.new_search()
-One.books()
+One.libroroom()
 
 print(One.title)
 print(One.author)
@@ -436,8 +467,8 @@ print(len(One.link))
 #print(len(One.title))
 
 
-# попроще, но косячные: https://www.knor.ru (надо придумать как перевести запрос в URL код)
-# косячные: https://www.chitai-gorod.ru/, https://chitaina.ru/, https://my-shop.ru, https://knigi-market.ru, https://libroroom.ru/
-# Очень косячные: https://bookpiter.ru/
+
+# косячные: https://www.chitai-gorod.ru/, https://chitaina.ru/, https://my-shop.ru, https://knigi-market.ru
+# Очень косячные: https://bookpiter.ru/, https://www.knor.ru
 
 # косячные у меня: https://libroroom.ru/, https://strana-fantasy.ru/, https://www.clever-media.ru, https://regionbook.ru/, https://slovo-shop.ru/, https://urizdat.ru/
