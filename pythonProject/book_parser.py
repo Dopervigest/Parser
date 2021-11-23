@@ -358,7 +358,6 @@ class Parser:
             self.price.append(price.text.strip().replace(" р", ""))
             self.link.append(link)
 
-
     def respublica(self):
         URL = "https://www.respublica.ru/search?query=" + self.user_search + "&category_id=1"
         page = requests.get(URL)
@@ -445,12 +444,99 @@ class Parser:
             self.author.append("")
             self.link.append("https://libroroom.ru/" + link)
 
+    def clever(self):
+        s = HTMLSession()
+        URL = "https://www.clever-media.ru/search/?q=" + self.user_search.replace(" ", "+")
+        session = s.get(URL)
+        try:
+            session.html.render(sleep=2, keep_page=True, scrolldown=1)
+        except:
+            return
+        soup = BeautifulSoup(session.content, "html.parser")
+        results = soup.find("div", class_="products-grid")
+        try:
+            book_elements = results.find_all("div", class_="item")
+        except AttributeError:
+            return
+        for book_element in book_elements:
+            title = book_element.find("div", class_="book-name").find("a", class_="js-item").get("data-name")
+            if title is None:
+                continue
+            try:
+                price = book_element.find("div", class_="book-price").find("div", class_="price v1").find("div", class_="price-new")
+            except AttributeError:
+                continue
+            link = book_element.find("div", class_="book-name").find("a", class_="js-item").get("href")
+            self.title.append(title)
+            self.price.append(price.text.strip().replace("рублей", ""))
+            self.author.append("")
+            self.link.append("https://www.clever-media.ru" + link)
 
+    def region(self):
+        s = HTMLSession()
+        URL = "https://regionbook.ru/search/?query=" + self.user_search.replace(" ", "+")
+        session = s.get(URL)
+        session.html.render(sleep=1, keep_page=True, scrolldown=2)
+        soup = BeautifulSoup(session.content, "html.parser")
+        results = soup.find("ul", class_="product-list expandable colored list")
+        try:
+            book_elements = results.find_all("div", class_="pl-item-wrapper")
+        except AttributeError:
+            return
+        for book_element in book_elements:
+            title = book_element.find("div", class_="pl-item-info-expandable").find("a").get("title")
+            if title is None:
+                continue
+            try:
+                price = book_element.find("div", class_="price-wrapper").find("span", class_="price nowrap")
+            except AttributeError:
+                continue
+            if price is None:
+                continue
+            link = book_element.find("div", class_="pl-item-info-expandable").find("a").get("href")
+            self.title.append(title)
+            self.price.append(price.text.strip().replace(" ₽", ""))
+            self.author.append("")
+            self.link.append("https://regionbook.ru" + link)
 
+    def alpina(self):
+        s = HTMLSession()
+        URL = "https://alpinabook.ru/catalog/search/?q=" + self.user_search.replace(" ", "+")
+        session = s.get(URL)
+        try:
+            session.html.render(sleep=1, keep_page=True, scrolldown=2, timeout=10)
+        except:
+            return
+        soup = BeautifulSoup(session.content, "html.parser")
+        results = soup.find("div", class_="b-catalog-items")
+        try:
+            book_elements = results.find_all("div", class_="b-catalog-items__item")
+        except AttributeError:
+            return
+        for book_element in book_elements:
+            title = book_element.find("div", class_="b-book-v w-book-hover book-card bgColor-element gtm-book-card js-book-card _gray").get("data-book-name")
+            if title is None:
+                continue
+            try:
+                price = book_element.find("div", class_="b-book-v w-book-hover book-card bgColor-element gtm-book-card js-book-card _gray").get("data-book-price")
+            except AttributeError:
+                continue
+            if int(price) == 0:
+                continue
+            link = book_element.find("div", class_="b-book-v__title").find("a").get("href")
+            author = book_element.find("div", class_="b-book-v__author").find("span")
+            try:
+                author = author.text.strip()
+            except:
+                author = ""
+            self.title.append(title)
+            self.price.append(price)
+            self.author.append(author)
+            self.link.append("https://alpinabook.ru" + link)
 
 One = Parser()
 One.new_search()
-One.libroroom()
+One.alpina()
 
 print(One.title)
 print(One.author)
@@ -471,4 +557,4 @@ print(len(One.link))
 # косячные: https://www.chitai-gorod.ru/, https://chitaina.ru/, https://my-shop.ru, https://knigi-market.ru
 # Очень косячные: https://bookpiter.ru/, https://www.knor.ru
 
-# косячные у меня: https://libroroom.ru/, https://strana-fantasy.ru/, https://www.clever-media.ru, https://regionbook.ru/, https://slovo-shop.ru/, https://urizdat.ru/
+# косячные у меня:  https://strana-fantasy.ru/, https://slovo-shop.ru/, https://urizdat.ru/
