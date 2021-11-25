@@ -88,7 +88,7 @@ class Parser:
 
     def bookskazan(self):
         for i in range(1, 100):
-            URL = "https://bookskazan.ru/catalog/?page=" + str(i) + "&q=Атлас"  # + self.user_search
+            URL = "https://bookskazan.ru/catalog/?page=" + str(i) + "&q=" + self.user_search
             page = requests.get(URL)
             soup = BeautifulSoup(page.content, "html.parser")
             results = soup.find("ul", class_="book-list content-razdel")
