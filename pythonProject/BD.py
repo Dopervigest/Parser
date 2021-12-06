@@ -10,19 +10,37 @@ def universal():
     wb = opxl.load_workbook('./Data_Base.xlsx')
     sheet = wb['Data_Base']
 
-    URL = sheet['A2'].value + user_search
-    page = requests.get(URL)
-    soup = BeautifulSoup(page.content, "html.parser")
-    results = soup.find(sheet['C2'].value, class_=sheet['D2'].value)
-    book_elements = results.find_all(sheet['E2'].value, class_=sheet['F2'].value)
-    for book_element in book_elements:
-        title = book_element.find(sheet['G2'].value)
-        author = book_element.find(sheet['I2'].value, class_=sheet['J2'].value)
-        price = book_element.find(sheet['K2'].value, class_=sheet['L2'].value)
-        link = book_element.find(sheet['M2'].value)
-        price = str(price.text.strip()).replace(' руб.', '')
-        b = Book(title.text.strip(), author.text.strip(), price, str((sheet['O2'].value + str(link.get('href')))))
-        Book.list_of_books.append(b)
+    for i in range(2, 5):
+        URL = sheet['A' + str(i)].value + user_search
+        page = requests.get(URL)
+        soup = BeautifulSoup(page.content, "html.parser")
+        results = soup.find(sheet['C'+ str(i)].value, class_=sheet['D'+ str(i)].value)
+        book_elements = results.find_all(sheet['E'+ str(i)].value, class_=sheet['F'+ str(i)].value)
+        for book_element in book_elements:
+            title = book_element.find(sheet['G' + str(i)].value, class_=sheet['H' + str(i)].value)
+            author = book_element.find(sheet['I'+ str(i)].value, class_=sheet['J' + str(i)].value)
+            price = book_element.find(sheet['K' + str(i)].value, class_=sheet['L' + str(i)].value)
+            link = book_element.find(sheet['M' + str(i)].value)
+
+            if title is None:
+                continue
+            else:
+                title = title.text.strip()
+
+            if author is None:
+                author = ""
+            else:
+                author = author.text.strip()
+
+            if price is None:
+                continue
+            else:
+                price = str(price.text.strip()).replace(' руб.', '')
+
+            link = str((sheet['O' + str(i)].value + str(link.get('href'))))
+
+            b = Book(title, author, price, link)
+            Book.list_of_books.append(b)
 
     out()
 
