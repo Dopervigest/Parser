@@ -1,2 +1,2 @@
-import BD
-BD.universal()
+import Parser
+Parser.universal()

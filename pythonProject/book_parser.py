@@ -536,7 +536,7 @@ class Parser:
 
 One = Parser()
 One.new_search()
-One.alpina()
+One.fkniga()
 
 print(One.title)
 print(One.author)
