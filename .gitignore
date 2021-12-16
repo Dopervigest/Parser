@@ -1,0 +1,4 @@
+# Default ignored files
+pythonProject/__pycache__
+pythonProject/Database_test.json
+pythonProject/test_file.py
