@@ -2,3 +2,4 @@
 pythonProject/__pycache__
 pythonProject/Database_test.json
 pythonProject/test_file.py
+pythonProject/book_parser.py
