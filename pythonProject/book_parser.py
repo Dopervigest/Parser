@@ -558,3 +558,22 @@ print(len(One.link))
 # Очень косячные: https://bookpiter.ru/, https://www.knor.ru
 
 # косячные у меня:  https://strana-fantasy.ru/, https://slovo-shop.ru/, https://urizdat.ru/
+
+"""
+    {"URL": "https://фантазеры.рф/search/?query=",
+        "URL2": "",
+        "RESULTS": "div",
+        "RESULTS2": "product-list products_view_grid per_row_3 larger_images  clearfix",
+        "BOOK_ELEMENTS": "div",
+        "BOOK_ELEMENTS2": "product flexdiscount-product-wrap",
+        "TITLE": "a",
+        "TITLE2": "",
+        "AUTHOR": "",
+        "AUTHOR2": "",
+        "PRICE": "span",
+        "PRICE2": "price nowrap",
+        "PRICE3": "price price-new nowrap",
+        "LINK": "a",
+        "LINK2": "",
+        "LINK3": "https://фантазеры.рф",
+        "mode": 0},"""
