@@ -3,10 +3,9 @@ import requests
 from bs4 import BeautifulSoup
 from book import Book
 from Out import out
-user_search = 'Гарри Поттер'
-#user_search = input()
 
-def universal():
+
+def universal(user_search):
     f = open('Database.json')
     data = json.load(f)
     for i in data['site_info']:
@@ -47,4 +46,5 @@ def universal():
             b = Book(title, author, price, link)
             Book.list_of_books.append(b)
 
-    out()
+    BookList = out()
+    return(BookList)
