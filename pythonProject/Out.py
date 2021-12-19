@@ -7,7 +7,7 @@ from book import Book
 
 def out():
     BookList = []
-    i = 0
+    i = 1
     for book in Book.list_of_books:
         d = {'number': i, 'title': book.title, 'author': book.author, 'price': book.price, 'link': book.link}
         i += 1

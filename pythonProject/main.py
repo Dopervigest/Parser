@@ -1,3 +1,3 @@
 import Parser
-Parser.universal()
+Parser.universal('Гарри Поттер')
 
