@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
+        <meta name="description" content="Описание страницы. Не менее 160 символов. " />
+        <meta name="keywords" content="Здесь указываем список ключевых слов, разделенные запятой." />
+        <title>{{ user_string }}</title>
+    </head>
+    <body>
+        <h1><font face="Arial">Результат поиска по тегу: {{ user_string }}</h1>
+        <table style="width:100%;" border="1">
+              <tbody>
+                    <tr>
+                        <th>Название</th>
+                        <th>Автор</th>
+                        <th>Цена</th>
+                        <th>Ссылка</th>
+                    </tr>
+                    {% for i in list %}
+                    <tr>
+                        <td>{{ i['title'] }}</td>
+                        <td>{{ i['author'] }}</td>
+                        <td>{{ i['price'] }}</td>
+                        <td>{{ i['link'] }}</td>
+                    </tr>
+                    {% endfor %}
+              </tbody>
+        </table>
+    </body>
+</html>
