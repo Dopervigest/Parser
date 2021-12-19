@@ -12,4 +12,4 @@ def out():
         d = {'number': i, 'title': book.title, 'author': book.author, 'price': book.price, 'link': book.link}
         i += 1
         BookList.append(d)
-    print(BookList)
+    return(BookList)

@@ -1,3 +1,4 @@
 import Parser
-Parser.universal('Гарри Поттер')
+BookList = Parser.universal('Гарри Поттер')
 
+print(BookList)

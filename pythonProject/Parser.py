@@ -46,4 +46,5 @@ def universal(user_search):
             b = Book(title, author, price, link)
             Book.list_of_books.append(b)
 
-    out()
+    BookList = out()
+    return(BookList)
